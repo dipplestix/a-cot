@@ -1,0 +1,12 @@
+openai>=1.0.0
+datasets>=2.14.0
+tqdm>=4.66.0
+numpy>=1.24.0
+pandas>=2.0.0
+tiktoken>=0.5.0  # For OpenAI token counting
+jsonlines>=3.1.0
+vllm>=0.3.0  # For efficient local model inference
+torch>=2.0.0
+accelerate>=0.25.0
+bitsandbytes>=0.41.0  # Optional: for quantization
+sentencepiece>=0.1.99  # For tokenization 
