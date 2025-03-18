@@ -1,65 +1,79 @@
-# GSM8K LLM Evaluation with Token Tracking
+# Adaptive Chain of Thought (A-CoT)
 
-This project allows you to run any LLM, including open source models like Llama 3.2, on the GSM8K math reasoning dataset while tracking token-level information.
+This project aims to optimize the length of reasoning traces in Large Reasoning Models (LRMs) using reinforcement learning techniques, without sacrificing performance.
+
+## Project Overview
+
+Large Reasoning Models (LRMs), such as OpenAI's o1/o3 and DeepSeek's R1, utilize a reasoning phase before producing solutions, which can be considered a form of automated chain of thought (CoT). However, these models may "overthink" and generate more reasoning tokens than necessary, increasing cost and solution time.
+
+Adaptive Chain of Thought (A-CoT) addresses this issue by dynamically determining the optimal length of reasoning traces while maintaining problem-solving capabilities.
+
+## Proposed Technique
+
+Our approach uses a reinforcement learning controller that:
+
+1. Examines the input prompt and current reasoning trace
+2. Decides whether to stop reasoning (by inserting a `</think>` token) or continue for n more tokens
+3. Optimizes based on a reward signal that considers both answer accuracy and reasoning trace length
+
+## Experiment Pipeline
+
+For each model size (small 1.5B, medium 14B, large 70B), our testing process includes:
+
+1. Running each question through the LRM and saving the response
+2. Using the RL controller to decide when to cut off the reasoning trace
+3. Querying the LRM with the truncated reasoning trace
+4. Comparing the results with full-length reasoning
+
+We will also compare our approach against fixed-length token restrictions.
+
+## Datasets
+
+We're evaluating performance using one or more of these datasets:
+
+- AIME - American Invitational Mathematics Examination problems
+- MMLU - Multi-task benchmark requiring strong problem-solving ability
+- GPQA - Benchmark for general knowledge and common-sense questions
+- MATH - Collection of challenging competition mathematics problems
+- GSM8K - Grade school math word problems created by human problem writers
+
+## Current Implementation
+
+This repository currently contains tools for:
+
+- Running LRMs on math reasoning datasets while tracking token-level information
+- Analyzing reasoning patterns and token usage
+- Evaluating answer accuracy with and without optimized reasoning traces
+
+### Running the Evaluation
+
+```bash
+python run_llm_on_gsm8k.py \
+  --model deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B \
+  --temperature 0.6
+```
+
+### Answer Extraction and Verification
+
+We've implemented scripts to:
+- Extract numerical answers from model responses
+- Compare with reference answers
+- Analyze the relationship between reasoning length and accuracy
+
+## Team
+
+- Chris Mascioli
+- Jeffrey Brill
+- Minghao Shen
 
 ## Setup
 
-1. Install the required dependencies:
+1. Install required dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. If you plan to use Llama 3.2 or other HuggingFace models, make sure you have:
-   - A HuggingFace token if the model requires authentication
+2. For HuggingFace models:
+   - Have a HuggingFace token if the model requires authentication
    - Sufficient GPU VRAM (or enable quantization with `--quantize`)
-
-## Running with Llama 3.2 locally
-
-```bash
-python run_llm_on_gsm8k.py \
-  --model meta-llama/Meta-Llama-3.2-8B-Instruct \
-  --api_key YOUR_HUGGINGFACE_TOKEN \
-  --quantize \
-  --max_samples 10  # Optional: limit number of samples for testing
-```
-
-## Options
-
-- `--model`: Model identifier (default: "meta-llama/Meta-Llama-3.2-8B-Instruct")
-- `--max_samples`: Maximum number of samples to process
-- `--output_dir`: Directory to save results (default: "gsm8k_results")
-- `--split`: Dataset split to use: train or test (default: test)
-- `--system_prompt`: System prompt for the LLM
-- `--temperature`: Temperature for sampling (default: 0)
-- `--api_key`: HuggingFace API token for downloading the model
-- `--quantize`: Use 4-bit quantization for reduced memory usage
-- `--use_openai`: Use OpenAI API instead of local model
-- `--max_new_tokens`: Maximum number of new tokens to generate (default: 1024)
-
-## Output Format
-
-For each GSM8K problem, the script tracks:
-- Input prompt and tokens
-- Generated response and tokens 
-- Time taken for generation
-- Token counts
-
-Results are saved in JSONL format in the output directory, with a summary JSON file containing aggregate statistics.
-
-## Alternative Models
-
-You can use any model supported by the Transformers library:
-
-```bash
-python run_llm_on_gsm8k.py --model mistralai/Mistral-7B-Instruct-v0.2
-```
-
-## OpenAI API (Alternative)
-
-You can also use the OpenAI API by adding the `--use_openai` flag:
-
-```bash
-export OPENAI_API_KEY=your_api_key
-python run_llm_on_gsm8k.py --model gpt-4o --use_openai
-```
