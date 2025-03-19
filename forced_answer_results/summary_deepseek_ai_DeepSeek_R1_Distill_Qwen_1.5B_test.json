@@ -1,12 +1,12 @@
 {
   "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
   "split": "test",
-  "samples_processed": 20,
-  "total_prompt_tokens": 1447,
-  "total_thinking_tokens": 3908,
-  "total_answer_tokens": 934,
-  "total_tokens": 6289,
-  "total_generation_time": 26.995354652404785,
-  "average_generation_time": 1.3497677326202393,
-  "timestamp": "2025-03-18 22:30:37"
+  "samples_processed": 1318,
+  "total_prompt_tokens": 95248,
+  "total_thinking_tokens": 548666,
+  "total_answer_tokens": 89796,
+  "total_tokens": 733710,
+  "total_generation_time": 3666.699560403824,
+  "average_generation_time": 2.7820178758754355,
+  "timestamp": "2025-03-19 01:38:18"
 }
