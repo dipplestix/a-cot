@@ -14,16 +14,18 @@ import pandas as pd
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Extract numerical answers from model responses')
-    parser.add_argument('--input_jsonl', type=str, default='gsm8k_results/results_deepseek_ai_DeepSeek_R1_Distill_Qwen_1.5B_test.jsonl',
-                        help='Path to input JSONL file containing GSM8K problems and model responses')
-    parser.add_argument('--output_csv', type=str, default='gsm8k_results/extracted_answers.csv',
-                        help='Path to output CSV file for extracted answers')
+    parser.add_argument('--input_jsonl', type=str, default='forced_answer_results/results.jsonl',
+                        help='Path to input JSONL file containing problems and model responses')
     parser.add_argument('--ollama_url', type=str, default='http://localhost:11434/v1',
                         help='URL for Ollama API')
     parser.add_argument('--model', type=str, default='llama3.2',
                         help='Model name in Ollama')
     parser.add_argument('--max_samples', type=int, default=None,
                         help='Maximum number of samples to process')
+    parser.add_argument('--response_column', type=str, default='forced_answer',
+                        help='Column name in the input file containing model responses')
+    parser.add_argument('--verbose', action='store_true',
+                        help='Print query and response details')
     return parser.parse_args()
 
 def extract_reference_answer(answer_text):
@@ -65,7 +67,7 @@ def normalize_answer(answer):
     
     return normalized
 
-def extract_answer(client, model_response, model_name="llama3.2"):
+def extract_answer(client, model_response, model_name="llama3.2", verbose=False):
     """Extract the numerical answer from a model's response."""
     try:
         prompt = f"""Below is a solution to a math problem. Extract ONLY the final numerical answer with no explanation, no units, no dollar signs, and no other text.
@@ -73,19 +75,38 @@ def extract_answer(client, model_response, model_name="llama3.2"):
 Problem solution:
 {model_response}
 
+For example if you see $70,000, you should return 70000. If you see 12 miles per hour, you should return 12. If you see 15 cups, you should return 15. If you see 40%, you should return 40.
+
 Final numerical answer:"""
+        
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant that extracts numerical answers from math problem solutions."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        if verbose:
+            print("\n" + "="*80)
+            print("QUERY TO LLM:")
+            print("-"*80)
+            for msg in messages:
+                print(f"{msg['role'].upper()}: {msg['content'][:200]}..." if len(msg['content']) > 200 else f"{msg['role'].upper()}: {msg['content']}")
+            print("="*80)
         
         response = client.chat.completions.create(
             model=model_name,
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that extracts numerical answers from math problem solutions."},
-                {"role": "user", "content": prompt}
-            ],
+            messages=messages,
             temperature=0.1
         )
         
         # Extract the answer from the response
         answer_text = response.choices[0].message.content.strip()
+        
+        if verbose:
+            print("\n" + "="*80)
+            print("LLM RESPONSE:")
+            print("-"*80)
+            print(answer_text)
+            print("="*80 + "\n")
         
         # Try to extract just a number from the response
         numeric_match = re.search(r'^[-+]?[0-9]*\.?[0-9]+$', answer_text)
@@ -116,9 +137,13 @@ def main():
     results = []
     
     # Read JSONL file
-    with jsonlines.open(args.input_jsonl) as reader:
+    input_path = Path(args.input_jsonl)
+    with jsonlines.open(input_path) as reader:
         problems = list(reader)
         
+    # Automatically determine output CSV path
+    output_csv = input_path.parent / "extracted_answers.csv"
+    
     # Limit number of samples if specified
     if args.max_samples:
         problems = problems[:min(args.max_samples, len(problems))]
@@ -130,12 +155,11 @@ def main():
         
         # Extract question and reference answer
         question = item.get("question", "")
-        reference_text = item.get("reference_answer", "")
-        reference_answer = extract_reference_answer(reference_text)
-        model_response = item.get("model_response", "")
+        reference_answer = extract_reference_answer(item.get("reference_answer", ""))
+        model_response = item.get(args.response_column, "")
         
         # Extract the answer from the model response
-        extracted_answer = extract_answer(client, model_response, args.model)
+        extracted_answer = extract_answer(client, model_response, args.model, verbose=args.verbose)
         
         # Normalize answers for comparison
         normalized_extracted = normalize_answer(extracted_answer)
@@ -176,11 +200,11 @@ def main():
     print(f"Extraction accuracy: {extraction_accuracy:.2%}")
     
     # Save to CSV
-    df.to_csv(args.output_csv, index=False)
-    print(f"\nResults saved to {args.output_csv}")
+    df.to_csv(output_csv, index=False)
+    print(f"\nResults saved to {output_csv}")
     
     # Also save a summary file
-    summary_file = Path(args.output_csv).with_suffix('.json')
+    summary_file = output_csv.with_suffix('.json')
     summary = {
         "extraction_model": args.model,
         "total_examples": int(total_count),
