@@ -22,7 +22,7 @@ def parse_args():
                         help='Model name in Ollama')
     parser.add_argument('--max_samples', type=int, default=None,
                         help='Maximum number of samples to process')
-    parser.add_argument('--response_column', type=str, default='forced_answer',
+    parser.add_argument('--response_column', type=str, default='model_answer',
                         help='Column name in the input file containing model responses')
     parser.add_argument('--verbose', action='store_true',
                         help='Print query and response details')

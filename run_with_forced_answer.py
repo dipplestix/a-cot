@@ -33,10 +33,10 @@ def parse_args():
                         help="HuggingFace API token for downloading the model")
     parser.add_argument("--quantize", action="store_true",
                         help="Use 4-bit quantization for reduced memory usage")
-    parser.add_argument("--max_new_tokens", type=int, default=1024,
-                        help="Maximum number of new tokens to generate (default: 1024)")
-    parser.add_argument("--max_think_tokens", type=int, default=512,
-                        help="Maximum number of thinking tokens to generate (default: 512)")
+    parser.add_argument("--max_new_tokens", type=int, default=16384,
+                        help="Maximum number of new tokens to generate (default: 16384)")
+    parser.add_argument("--max_think_tokens", type=int, default=16384,
+                        help="Maximum number of thinking tokens to generate (default: 16384)")
     parser.add_argument("--verbose", action="store_true",
                         help="Print detailed information during processing")
     return parser.parse_args()
@@ -170,7 +170,6 @@ def run_forced_answer_experiment(args):
     for idx, example in enumerate(progress_bar):
         question = example["question"]
         reference_answer_text = example["answer"]
-        reference_answer = extract_reference_answer(reference_answer_text)
         
         try:
             # Run model with forced answer
@@ -181,7 +180,6 @@ def run_forced_answer_experiment(args):
                 "id": idx,
                 "question": question,
                 "reference_answer": reference_answer_text,
-                "reference_answer_extracted": reference_answer,
                 "model": args.model,
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
             })
