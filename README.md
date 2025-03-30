@@ -94,6 +94,12 @@ This script:
 
 The extracted answers are saved as `extracted_answers.csv` and `extracted_answers.json` in the same directory as the input JSONL file.
 
+### Truncate think trace
+Truncate the thinking trace in `saved_tokens/results_{model}_{split}.jsonl`, with max length `max_length`.
+```sh
+python truncate_cot.py --max_length 100
+```
+
 ## Team
 
 - Chris Mascioli

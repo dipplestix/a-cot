@@ -1,0 +1,8 @@
+{
+  "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+  "split": "test",
+  "samples_processed": 1319,
+  "total_thinking_tokens": 129315,
+  "total_answer_tokens": 559436,
+  "timestamp": "2025-03-22 02:13:36"
+}
