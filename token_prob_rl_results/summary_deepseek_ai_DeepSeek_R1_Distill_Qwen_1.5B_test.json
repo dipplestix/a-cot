@@ -1,0 +1,115 @@
+{
+  "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+  "split": "test",
+  "epochs": 10,
+  "iterations_per_example": 1,
+  "samples_processed": 1000,
+  "final_accuracy": 0.877,
+  "avg_steps": 10.894,
+  "avg_reward": 904.779,
+  "avg_thinking_tokens": 108.093,
+  "avg_end_think_probability": 0.01,
+  "timestamp": "2025-04-20 03:00:33",
+  "epoch_history": [
+    {
+      "epoch": 0,
+      "accuracy": 0.343,
+      "avg_steps": 10.254,
+      "avg_reward": -263.975,
+      "avg_thinking_tokens": 101.821,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 343,
+      "total_count": 1000
+    },
+    {
+      "epoch": 1,
+      "accuracy": 0.375,
+      "avg_steps": 11.97,
+      "avg_reward": -200.077,
+      "avg_thinking_tokens": 118.838,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 375,
+      "total_count": 1000
+    },
+    {
+      "epoch": 2,
+      "accuracy": 0.407,
+      "avg_steps": 12.42,
+      "avg_reward": -130.592,
+      "avg_thinking_tokens": 123.221,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 407,
+      "total_count": 1000
+    },
+    {
+      "epoch": 3,
+      "accuracy": 0.414,
+      "avg_steps": 13.275,
+      "avg_reward": -119.061,
+      "avg_thinking_tokens": 131.534,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 414,
+      "total_count": 1000
+    },
+    {
+      "epoch": 4,
+      "accuracy": 0.432,
+      "avg_steps": 13.511,
+      "avg_reward": -79.898,
+      "avg_thinking_tokens": 134.091,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 432,
+      "total_count": 1000
+    },
+    {
+      "epoch": 5,
+      "accuracy": 0.204,
+      "avg_steps": 6.546,
+      "avg_reward": -559.169,
+      "avg_thinking_tokens": 65.719,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 204,
+      "total_count": 1000
+    },
+    {
+      "epoch": 6,
+      "accuracy": 0.419,
+      "avg_steps": 12.92,
+      "avg_reward": -109.502,
+      "avg_thinking_tokens": 127.945,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 419,
+      "total_count": 1000
+    },
+    {
+      "epoch": 7,
+      "accuracy": 0.341,
+      "avg_steps": 10.324,
+      "avg_reward": -270.959,
+      "avg_thinking_tokens": 102.938,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 341,
+      "total_count": 1000
+    },
+    {
+      "epoch": 8,
+      "accuracy": 0.323,
+      "avg_steps": 10.345,
+      "avg_reward": -307.154,
+      "avg_thinking_tokens": 103.16,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 323,
+      "total_count": 1000
+    },
+    {
+      "epoch": 9,
+      "accuracy": 0.416,
+      "avg_steps": 13.69,
+      "avg_reward": -119.5,
+      "avg_thinking_tokens": 136.089,
+      "avg_end_think_probability": 0.01,
+      "correct_count": 416,
+      "total_count": 1000
+    }
+  ]
+}
