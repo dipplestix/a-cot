@@ -99,7 +99,14 @@ def load_local_model(args):
 
 def format_prompt(question):
     """Format the prompt for the LLM."""
-    return f"Solve the following math problem step-by-step:\n\n{question}"
+    return f"""Do not include units or any other characters except the number corresponding to the answer. For example, if the answer is 10, you should output "FINAL ANSWER: 10" and not "FINAL ANSWER: 10 dollars" or "FINAL ANSWER: $10.
+    {question}
+    Let's think step by step:
+
+
+
+"
+"""
 
 def run_local_llm(llm, system_prompt, user_prompt, args):
     """Run local LLM inference using vLLM."""

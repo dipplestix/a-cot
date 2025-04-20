@@ -33,10 +33,10 @@ def parse_args():
                         help="HuggingFace API token for downloading the model")
     parser.add_argument("--quantize", action="store_true",
                         help="Use 4-bit quantization for reduced memory usage")
-    parser.add_argument("--max_new_tokens", type=int, default=16384,
-                        help="Maximum number of new tokens to generate (default: 16384)")
-    parser.add_argument("--max_think_tokens", type=int, default=16384,
-                        help="Maximum number of thinking tokens to generate (default: 16384)")
+    parser.add_argument("--max_new_tokens", type=int, default=32000,
+                        help="Maximum number of new tokens to generate (default: 32000)")
+    parser.add_argument("--max_think_tokens", type=int, default=31000,
+                        help="Maximum number of thinking tokens to generate (default: 31000)")
     parser.add_argument("--verbose", action="store_true",
                         help="Print detailed information during processing")
     return parser.parse_args()
@@ -69,6 +69,7 @@ def run_model_with_forced_answer(llm, tokenizer, question, args):
     think_outputs = llm.generate([first_prompt], think_sampling_params)
     think_output = think_outputs[0]
     think_text = think_output.outputs[0].text
+    think_token_ids = think_output.outputs[0].token_ids
     
     if args.verbose:
         print("\n" + "="*80)
@@ -102,6 +103,7 @@ def run_model_with_forced_answer(llm, tokenizer, question, args):
     answer_outputs = llm.generate([second_prompt], answer_sampling_params)
     answer_output = answer_outputs[0]
     answer_text = answer_output.outputs[0].text
+    answer_token_ids = answer_output.outputs[0].token_ids
     
     if args.verbose:
         print("\n" + "="*80)
@@ -119,6 +121,8 @@ def run_model_with_forced_answer(llm, tokenizer, question, args):
         "thinking_token_count": len(think_output.outputs[0].token_ids),
         "answer_token_count": len(answer_output.outputs[0].token_ids),
         "total_token_count": len(think_output.prompt_token_ids) + len(think_output.outputs[0].token_ids) + len(answer_output.outputs[0].token_ids),
+        "thinking_token_ids": think_token_ids,
+        "answer_token_ids": answer_token_ids,
         "generation_time": end_time - start_time
     }
     
